@@ -25,9 +25,7 @@ io.on("connection", (socket) => {
   emitUserCount();
 
   socket.on("join_queue", () => {
-
     if (!waitingLine.has(socket.id)) {
-
       waitingLine.add(socket.id);
 
       if (waitingLine.size >= 2) {
@@ -52,6 +50,24 @@ io.on("connection", (socket) => {
         assignUserToRoom(user1, true);
         assignUserToRoom(user2, false);
       }
+    }
+  });
+
+  socket.on("make_move", ({ miniBoardIndex, cellIndex, room, value }) => {
+    const roomDetails = rooms[room];
+    if (!roomDetails) return;
+
+    if (roomDetails.currentTurn === socket.id) {
+      const currentTurn =
+        roomDetails.currentTurn === roomDetails.user1
+          ? roomDetails.user2
+          : roomDetails.user1;
+      roomDetails.currentTurn = currentTurn;
+      io.to(currentTurn).emit("opponent_move", {
+        miniBoardIndex,
+        cellIndex,
+        value,
+      });
     }
   });
 

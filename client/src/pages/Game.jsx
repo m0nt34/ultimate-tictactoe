@@ -8,23 +8,36 @@ import { listenToEvent, removeListener } from "../services/socket";
 import { useRoom } from "../store/room";
 import { useTurn } from "../store/Turn";
 import { useValue } from "../store/Value";
+import { checkMiniBoardWinner } from "../utils/checkMiniBoardWinner";
+import { useBoard } from "../store/board";
+import { useAllowedMiniBoard } from "../store/allowedMiniBoard";
 
 const Game = () => {
   const { gameStarted, setGameStarted } = useGameStarted();
   const { setRoom } = useRoom();
-  const { setTurn } = useTurn();
+  const { setTurn, setTurnToOpposite } = useTurn();
   const { setValue } = useValue();
+  const { updateCell } = useBoard();
+  const { setAllowedMiniBoard } = useAllowedMiniBoard();
   useEffect(() => {
     listenToEvent("room_assigned", ({ room, turn }) => {
       setRoom(room);
-      setTurn(turn);
-      console.log(room);
 
+      setTurn("x");
       turn ? setValue("x") : setValue("o");
       setGameStarted(true);
     });
+
+    listenToEvent("opponent_move", ({ miniBoardIndex, cellIndex, value }) => {
+      updateCell(miniBoardIndex, cellIndex, value);
+      checkMiniBoardWinner(miniBoardIndex);
+      setAllowedMiniBoard(cellIndex);
+      setTurnToOpposite();
+    });
+
     return () => {
       removeListener("room_assigned");
+      removeListener("opponent_move");
     };
   });
   return (
