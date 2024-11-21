@@ -11,6 +11,7 @@ import { useValue } from "../store/Value";
 import { checkMiniBoardWinner } from "../utils/checkMiniBoardWinner";
 import { useBoard } from "../store/board";
 import { useAllowedMiniBoard } from "../store/allowedMiniBoard";
+import ResultBox from "../components/ResultBox";
 
 const Game = () => {
   const { gameStarted, setGameStarted } = useGameStarted();
@@ -46,6 +47,7 @@ const Game = () => {
         <div className="flex flex-col gap-5 w-fit">
           <GameHeader />
           <Board />
+          <ResultBox />
         </div>
       ) : (
         <StartMenu />

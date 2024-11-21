@@ -1,20 +1,20 @@
 import React from "react";
 import Xmark from "../assets/icons/Xmark";
 import Omark from "../assets/icons/Omark";
-
+import style from "../assets/style/loader.module.css";
 const CustomLoader = () => {
   return (
     <div className="flex flex-col w-full justify-center items-center">
-      <div className="custom_loader">
-        <div className="first_set">
+      <div className={style.custom_loader}>
+        <div className={style.first_set}>
           <Xmark />
           <Omark />
         </div>
-        <div className="second_set">
+        <div className={style.second_set}>
           <Omark />
           <Xmark />
         </div>
-        <div className="third_set">
+        <div className={style.third_set}>
           <Xmark />
           <Omark />
         </div>
