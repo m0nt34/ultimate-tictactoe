@@ -18,6 +18,7 @@ const Buttons = () => {
   };
   const leaveQueueFunc = () => {
     setSearching(false);
+    emitEvent("leave_queue");
   };
   return (
     <>

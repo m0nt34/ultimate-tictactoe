@@ -16,10 +16,10 @@
   top: 0;
   left: 0;
   z-index: 1000;
-  animation: 0.8s appear;
+  animation: 0.5s appear;
   user-select: none;
 }
-
+ 
 .show_result_cont .show_result {
   display: flex;
   flex-direction: column;
@@ -28,43 +28,65 @@
   justify-content: center;
   background-color: #1f3540;
   width: 100%;
-  padding: 30px 0 40px 0;
-  animation: 1.6s appear_box;
+  padding: 30px 0 35px 0;
+  animation: 1.2s appear_box;
 }
-.show_result_cont .show_result header,
+.show_result_cont .show_result .custom_header {
+  font-size: 1.25rem;
+  color: #a8bec9;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.show_result_cont .show_result .buttons_cont {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+  width: 220px;
+}
+
+.show_result_cont .show_result .custom_header,
 .show_result_cont .show_result h1,
-.show_result_cont .show_result div {
-  animation: 2.4s appear_text;
-
+.show_result_cont .show_result .buttons_cont {
+  animation: 2s appear_text;
 }
-
+.resultBox_loader {
+  animation: none;
+  animation-duration: 0;
+  margin: 12px 0 12px 0;
+}
 @keyframes appear {
   from {
     background-color: rgba(0, 0, 0, 0);
   }
   to {
     background-color: rgba(0, 0, 0, 0.4);
-  }  
+  }
 }
 @keyframes appear_box {
   0% {
+    pointer-events: none;
     width: 0%;
   }
-  50% {
-    width: 0%; 
+  40% {
+    pointer-events: none;
+    width: 0%;
   }
   100% {
+    pointer-events: all;
     width: 100%;
   }
 }
 @keyframes appear_text {
   0% {
+    pointer-events: none;
     opacity: 0;
   }
-  66% {
+  55% {
+    pointer-events: none;
     opacity: 0;
   }
   100% {
+    pointer-events: all;
     opacity: 1;
   }
 }

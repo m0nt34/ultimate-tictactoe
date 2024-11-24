@@ -1,13 +1,15 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Xmark from "../assets/icons/Xmark";
 import Omark from "../assets/icons/Omark";
 import Flag from "../assets/icons/Flag";
 import { useTurn } from "../store/Turn";
 import { useValue } from "../store/Value";
+import { useResign } from "../store/resign";
 
 const GameHeader = () => {
   const { turn } = useTurn();
   const { value } = useValue();
+  const { setResign } = useResign();
   return (
     <div className="flex items-center w-full justify-between h-16">
       <div className="flex gap-2">
@@ -22,7 +24,10 @@ const GameHeader = () => {
         )}
         {turn === value ? "Your turn" : "Opponent's turn"}
       </div>
-      <div className="flex items-center justify-center bg-gray ml-[34px] h-full aspect-square rounded-lg cursor-pointer  border-b-4 border-dark_gray hover:opacity-90 transition-opacity">
+      <div
+        onClick={() => setResign(true)}
+        className="flex items-center justify-center bg-gray ml-[34px] h-full aspect-square rounded-lg cursor-pointer  border-b-4 border-dark_gray hover:opacity-90 transition-opacity"
+      >
         <Flag className="h-2/3" />
       </div>
     </div>

@@ -1,0 +1,188 @@
+.hide_resign_cont {
+  display: none;
+  height: 0%;
+  width: 0%;
+  top: 0;
+  left: 0;
+}
+.show_resign_cont {
+  position: fixed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.4);
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  animation: 0.4s appear;
+  user-select: none;
+}
+.hide_resign_cont {
+  animation: 1s disappear;
+}
+.show_resign_cont .show_resign {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+  justify-content: center;
+  background-color: #1f3540;
+  width: 100%;
+  padding: 30px 0 35px 0;
+  animation: 1s appear_box;
+}
+.hide_resign_cont .hide_resign {
+  animation: 0.6s disappear_box;
+}
+.show_resign_cont .show_resign .buttons_cont {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+  width: 100%;
+  max-width: 400px;
+}
+
+.show_resign_cont .show_resign h1,
+.show_resign_cont .show_resign .buttons_cont {
+  animation: 1s appear_text;
+}
+.hide_resign_cont .hide_resign h1 {
+  animation: 0.3s disappear_text;
+  pointer-events: none;
+  opacity: 0;
+}
+.hide_resign_cont .hide_resign .buttons_cont {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+  width: 100%;
+  max-width: 400px;
+  animation: 0.4s disappear_text;
+  pointer-events: none;
+  opacity: 0;
+}
+
+@keyframes appear {
+  from {
+    background-color: rgba(0, 0, 0, 0);
+  }
+  to {
+    background-color: rgba(0, 0, 0, 0.4);
+  }
+}
+@keyframes appear_box {
+  0% {
+    pointer-events: none;
+    width: 0%;
+  }
+  40% {
+    pointer-events: none;
+    width: 0%;
+  }
+  100% {
+    pointer-events: all;
+    width: 100%;
+  }
+}
+@keyframes appear_text {
+  0% {
+    pointer-events: none;
+    opacity: 0;
+  }
+  55% {
+    pointer-events: none;
+    opacity: 0;
+  }
+  100% {
+    pointer-events: all;
+    opacity: 1;
+  }
+}
+
+@keyframes disappear {
+  0% {
+    position: fixed;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.4);
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+  }
+  60% {
+    position: fixed;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.4);
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+  }
+  100% {
+    position: fixed;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0);
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+  }
+}
+@keyframes disappear_box {
+  0% {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: center;
+    justify-content: center;
+    background-color: #1f3540;
+    width: 100%;
+    padding: 30px 0 35px 0;
+  }
+  50% {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: center;
+    justify-content: center;
+    background-color: #1f3540;
+    width: 100%;
+    padding: 30px 0 35px 0;
+  }
+  100% {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    align-items: center;
+    justify-content: center;
+    background-color: #1f3540;
+    padding: 30px 0 35px 0;
+    pointer-events: none;
+    width: 0%;
+  }
+}
+@keyframes disappear_text {
+  0% {
+    display: flex;
+    pointer-events: all;
+    opacity: 1;
+    gap: 10px;
+  }
+  100% {
+    display: flex;
+    pointer-events: none;
+    opacity: 0;
+    gap: 10px;
+  }
+}

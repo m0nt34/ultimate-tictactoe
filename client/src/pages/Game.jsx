@@ -12,6 +12,8 @@ import { checkMiniBoardWinner } from "../utils/checkMiniBoardWinner";
 import { useBoard } from "../store/board";
 import { useAllowedMiniBoard } from "../store/allowedMiniBoard";
 import ResultBox from "../components/ResultBox";
+import { resultFunction } from "../utils/resultFunction";
+import GiveUpBox from "../components/GiveUpBox";
 
 const Game = () => {
   const { gameStarted, setGameStarted } = useGameStarted();
@@ -33,6 +35,7 @@ const Game = () => {
       updateCell(miniBoardIndex, cellIndex, value);
       checkMiniBoardWinner(miniBoardIndex);
       setAllowedMiniBoard(cellIndex);
+      resultFunction();
       setTurnToOpposite();
     });
 
@@ -48,6 +51,7 @@ const Game = () => {
           <GameHeader />
           <Board />
           <ResultBox />
+          <GiveUpBox />
         </div>
       ) : (
         <StartMenu />

@@ -1,6 +1,7 @@
 import express from "express";
 import http from "http";
 import { Server } from "socket.io";
+import { isBooleanObject } from "util/types";
 
 const app = express();
 
@@ -22,8 +23,10 @@ io.on("connection", (socket) => {
   connectedUsers.add(socket.id);
 
   const emitUserCount = () => io.emit("users_count", connectedUsers.size);
+  socket.on("get_users_count", () => {
+    socket.emit("users_count", connectedUsers.size);
+  });
   emitUserCount();
-
   socket.on("join_queue", () => {
     if (!waitingLine.has(socket.id)) {
       waitingLine.add(socket.id);
@@ -52,7 +55,11 @@ io.on("connection", (socket) => {
       }
     }
   });
-
+  socket.on("leave_queue", () => {
+    if (waitingLine.has(socket.id)) {
+      waitingLine.delete(socket.id);
+    }
+  });
   socket.on("make_move", ({ miniBoardIndex, cellIndex, room, value }) => {
     const roomDetails = rooms[room];
     if (!roomDetails) return;
@@ -71,6 +78,96 @@ io.on("connection", (socket) => {
     }
   });
 
+  socket.on("offer_rematch", ({ room }) => {
+    if (!rooms[room]) {
+      io.to(socket.id).emit(
+        "opponent_left",
+        "YOUR OPPONENT HAS LEFT THE ROOM!"
+      );
+      return;
+    }
+    const offeredUser =
+      rooms[room]?.user1 === socket.id ? rooms[room].user2 : rooms[room].user1;
+
+    const isOfferedUserInRoom =
+      rooms[room].user1 === offeredUser || rooms[room].user2 === offeredUser;
+
+    if (isOfferedUserInRoom && offeredUser) {
+      io.to(offeredUser).emit("get_rematch_offer");
+    } else {
+      io.to(socket.id).emit(
+        "opponent_left",
+        "YOUR OPPONENT HAS LEFT THE ROOM!"
+      );
+    }
+  });
+
+  socket.on("accept_rematch", ({ room }) => {
+    if (!rooms[room]) {
+      io.to(socket.id).emit(
+        "opponent_left",
+        "YOUR OPPONENT HAS LEFT THE ROOM!"
+      );
+      return;
+    }
+    const offeringUser =
+      rooms[room]?.user1 === socket.id ? rooms[room].user2 : rooms[room].user1;
+
+    const isOfferingUserInRoom =
+      rooms[room].user1 === offeringUser || rooms[room].user2 === offeringUser;
+
+    if (isOfferingUserInRoom && offeringUser) {
+      const user1 = rooms[room]?.user1 || null;
+      const user2 = rooms[room]?.user2 || null;
+      rooms[room].user1 = user2;
+      rooms[room].user2 = user1;
+      rooms[room].currentTurn = rooms[room].user1;
+      io.to(rooms[room].user1).emit("get_rematch_accepted", { turn: true });
+      io.to(rooms[room].user2).emit("get_rematch_accepted", { turn: false });
+    } else {
+      io.to(socket.id).emit(
+        "opponent_left",
+        "YOUR OPPONENT HAS LEFT THE ROOM!"
+      );
+    }
+  });
+  socket.on("decline_rematch", (room) => {
+    console.log(room);
+
+    if (!rooms[room]) {
+      return;
+    }
+    const offeringUser =
+      rooms[room]?.user1 === socket.id ? rooms[room].user2 : rooms[room].user1;
+
+    io.to(offeringUser).emit(
+      "opponent_left",
+      "YOUR OPPONENT DECLINED YOUR REMATCH OFFER!"
+    );
+  });
+
+  socket.on("leave_room", (room) => {
+    const details = rooms[room];
+
+    if (details) {
+      if (details.user1 === socket.id) {
+        details.user1 = null;
+      } else if (details.user2 === socket.id) {
+        details.user2 = null;
+      }
+
+      if (!details.user1 && !details.user2) {
+        delete rooms[room];
+      }
+    }
+  });
+
+  socket.on("resign", (room) => {
+    const winner =
+      rooms[room].user1 === socket.id ? rooms[room].user2 : rooms[room].user1;
+    io.to(winner).emit("early_resignation", "VICTORY BY RESIGNATION!");
+  });
+
   socket.on("disconnect", () => {
     connectedUsers.delete(socket.id);
     waitingLine.delete(socket.id);
@@ -79,7 +176,10 @@ io.on("connection", (socket) => {
     for (const [room, details] of Object.entries(rooms)) {
       if (details.user1 === socket.id || details.user2 === socket.id) {
         delete rooms[room];
-        io.to(room).emit("room_closed", { message: "Opponent disconnected" });
+        io.to(room).emit(
+          "early_resignation",
+          "THE GAME CANNOT CONTINUE AS YOUR OPPONENT HAS DISCONNECTED!"
+        );
         io.socketsLeave(room);
       }
     }

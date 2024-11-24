@@ -1,6 +1,5 @@
 import { combinations } from "../data/winningCombinations";
 import { useBoard } from "../store/board";
-import { checkWinner } from "./checkGameWinner";
 export const checkMiniBoardWinner = (miniBoardIndex) => {
   const { board, updateMiniBoardValue } = useBoard.getState();
   if (board[miniBoardIndex].value) return;
@@ -13,7 +12,6 @@ export const checkMiniBoardWinner = (miniBoardIndex) => {
       board[miniBoardIndex].miniBoard[b] === board[miniBoardIndex].miniBoard[c]
     ) {
       updateMiniBoardValue(miniBoardIndex, board[miniBoardIndex].miniBoard[a]);
-      checkWinner();
       break;
     }
   }

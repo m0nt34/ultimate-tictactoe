@@ -30,7 +30,7 @@ const Board = () => {
             }`}
           >
             {miniBoard.value ? (
-              <div className="flex items-center justify-center bg-light_background w-[202px] h-full rounded-lg border-b-4 border-dark_background">
+              <div className="flex items-center justify-center bg-light_background w-[202px] h-[214px] rounded-lg border-b-4 border-dark_background">
                 {miniBoard.value === "x" ? (
                   <Xmark className="h-[55%] w-[55%]" />
                 ) : (

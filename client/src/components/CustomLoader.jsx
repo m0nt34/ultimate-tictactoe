@@ -4,7 +4,7 @@ import Omark from "../assets/icons/Omark";
 import style from "../assets/style/loader.module.css";
 const CustomLoader = () => {
   return (
-    <div className="flex flex-col w-full justify-center items-center">
+    <div className="flex flex-col w-full justify-center items-center animate-none">
       <div className={style.custom_loader}>
         <div className={style.first_set}>
           <Xmark />
