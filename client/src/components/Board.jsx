@@ -44,7 +44,7 @@ const Board = () => {
               miniBoard.miniBoard.map((cell, j) => {
                 return (
                   <div
-                    className={`flex items-center justify-center bg-light_background aspect-[16/17] h-auto w-full border-dark_background ${
+                    className={`flex items-center justify-center bg-light_background aspect-[16/17] h-auto w-full rounded-lg sm600:rounded-[7px] sm460:rounded-md hover:bg-[#284452] cursor-pointer border-b-4 sm460:border-b-[3px] border-dark_background ${
                       cell ? "pointer-events-none" : null
                     }`}
                     key={`${i}-${j}`}
