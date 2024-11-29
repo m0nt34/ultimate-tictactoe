@@ -33,8 +33,6 @@ const ResultBox = () => {
     });
     listenToEvent("get_rematch_accepted", ({ turn }) => {
       setTurn("x");
-      console.log("value when match started " + turn);
-
       setValue(turn);
       setAllowedMiniBoard(null);
       setToDefault();
@@ -91,9 +89,6 @@ const ResultBox = () => {
     setText("WAITING FOR OPPONENT'S REMATCH RESPONSE!");
     emitEvent("offer_rematch", { room });
   };
-  useEffect(() => {
-    console.log("VALUE CHANGED TO", value);
-  }, [value]);
   return (
     <div
       className={

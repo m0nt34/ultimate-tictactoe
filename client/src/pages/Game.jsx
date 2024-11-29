@@ -32,7 +32,7 @@ const Game = () => {
   useEffect(() => {
     listenToEvent("room_assigned", ({ room, time, turn }) => {
       setRoom(room);
-      setTime(time);
+      time === false ? setTime(0) : setTime(time);
       setTurn("x");
       setValue(turn);
 

@@ -8,6 +8,7 @@ const Timer = () => {
   const { time, restartTimer, countDown } = useTime();
   const { text } = useWinner();
   useEffect(() => {
+
     if (text.length === 0 && time !== 0) {
       restartTimer();
     }
