@@ -72,7 +72,7 @@ const Game = () => {
   }, []);
 
   return (
-    <div className="flex items-center justify-center min-h-screen w-full bg-background">
+    <div className="flex items-center justify-center min-h-screen w-full">
       {gameStarted ? (
         <div className="flex items-center justify-center w-full px-5">
           <div className="flex flex-col gap-5 w-full max-w-[638px]">
