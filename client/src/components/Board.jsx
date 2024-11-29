@@ -13,7 +13,7 @@ const Board = () => {
   const { allowedMiniBoard } = useAllowedMiniBoard();
 
   return (
-    <div className="grid grid-cols-3 gap-4 sm600:gap-3 sm460:gap-[10px] sm400:gap-[9px]">
+    <div className="grid grid-cols-3 gap-4 sm600:gap-3 sm460:gap-[10px] sm400:gap-[9px] h-fit">
       {board.map((miniBoard, i) => {
         return (
           <div
@@ -44,7 +44,7 @@ const Board = () => {
               miniBoard.miniBoard.map((cell, j) => {
                 return (
                   <div
-                    className={`flex items-center justify-center bg-light_background aspect-[16/17] w-full rounded-lg sm600:rounded-[7px] sm460:rounded-md hover:bg-[#284452] cursor-pointer border-b-4 sm460:border-b-[3px] border-dark_background ${
+                    className={`flex items-center justify-center bg-light_background aspect-[16/17] h-auto w-full rounded-lg sm600:rounded-[7px] sm460:rounded-md hover:bg-[#284452] cursor-pointer border-b-4 sm460:border-b-[3px] border-dark_background ${
                       cell ? "pointer-events-none" : null
                     }`}
                     key={`${i}-${j}`}
@@ -52,9 +52,9 @@ const Board = () => {
                   >
                     {cell ? (
                       cell === "x" ? (
-                        <Xmark className="h-[55%] aspect-square" />
+                        <Xmark className="h-[55%] w-[55%] aspect-square" />
                       ) : (
-                        <Omark className="h-[55%] aspect-square" />
+                        <Omark className="h-[55%] w-[55%] aspect-square" />
                       )
                     ) : null}
                   </div>
