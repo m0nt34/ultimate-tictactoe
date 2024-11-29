@@ -14,9 +14,9 @@ const GameHeader = () => {
   return (
     <div className="flex items-center w-full justify-between h-16 sm600:h-[50px] sm460:h-[40px] sm400:h-[35px]">
       <div className="flex gap-2  sm600:gap-1">
-        <Timer/>
+        <Timer />
       </div>
-      <div className="flex items-center justify-center px-4 sm600:px-3 sm460:px-[10px] sm400:px-2 gap-5 sm600:gap-3 sm460:gap-[10px] sm400:gap-2 h-full rounded-lg sm600:rounded-[6px] sm460:rounded-md bg-light_background text-2xl sm600:text-[21px] sm460:text-lg sm400:text-base font-bold text-gray whitespace-nowrap border-b-4 sm600:border-b-[3px] border-dark_background">
+      <div className="flex items-center w-fit justify-center px-4 sm600:px-3 sm460:px-[10px] sm400:px-2 gap-5 sm600:gap-3 sm460:gap-[10px] sm400:gap-2 h-full rounded-lg sm600:rounded-[6px] sm460:rounded-md bg-light_background text-2xl sm600:text-[21px] sm460:text-lg sm400:text-base font-bold text-gray whitespace-nowrap border-b-4 sm600:border-b-[3px] border-dark_background">
         {turn === "x" ? (
           <Xmark className="h-2/4 w-fit aspect-square" fill="#A8BEC9" />
         ) : (
