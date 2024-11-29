@@ -55,3 +55,15 @@
     display: none;
   }
 }
+@media (max-width: 400px) {
+  .custom_loader {
+    display: flex;
+    gap: 2px;
+  }
+  .custom_loader .first_set svg,
+  .custom_loader .second_set svg,
+  .custom_loader .third_set svg {
+    width: 25px;
+    height: 25px;
+  }
+}

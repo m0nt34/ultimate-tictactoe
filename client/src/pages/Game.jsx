@@ -1,10 +1,9 @@
-import React, { useEffect } from "react";
-
+import React, { useCallback, useEffect } from "react";
 import Board from "../components/Board";
 import GameHeader from "../components/GameHeader";
 import { useGameStarted } from "../store/gameStarted";
 import StartMenu from "../components/startMenu/StartMenu";
-import { listenToEvent, removeListener } from "../services/socket";
+import { emitEvent, listenToEvent, removeListener } from "../services/socket";
 import { useRoom } from "../store/room";
 import { useTurn } from "../store/Turn";
 import { useValue } from "../store/Value";
@@ -14,6 +13,8 @@ import { useAllowedMiniBoard } from "../store/allowedMiniBoard";
 import ResultBox from "../components/ResultBox";
 import { resultFunction } from "../utils/resultFunction";
 import GiveUpBox from "../components/GiveUpBox";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
+import { useTime } from "../store/time";
 
 const Game = () => {
   const { gameStarted, setGameStarted } = useGameStarted();
@@ -22,12 +23,19 @@ const Game = () => {
   const { setValue } = useValue();
   const { updateCell } = useBoard();
   const { setAllowedMiniBoard } = useAllowedMiniBoard();
-  useEffect(() => {
-    listenToEvent("room_assigned", ({ room, turn }) => {
-      setRoom(room);
+  const { setTime, restartTimer, time } = useTime();
 
+  const [searchParams] = useSearchParams();
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    listenToEvent("room_assigned", ({ room, time, turn }) => {
+      setRoom(room);
+      setTime(time);
       setTurn("x");
-      turn ? setValue("x") : setValue("o");
+      setValue(turn);
+
       setGameStarted(true);
     });
 
@@ -37,24 +45,47 @@ const Game = () => {
       setAllowedMiniBoard(cellIndex);
       resultFunction();
       setTurnToOpposite();
+      if (time !== 0) {
+        restartTimer();
+      }
     });
-
+    listenToEvent("private_room_is_not_valid", () => {
+      navigate("/", { replace: true });
+    });
     return () => {
       removeListener("room_assigned");
       removeListener("opponent_move");
     };
   });
+  const checkIfPrivate = useCallback(() => {
+    return location.pathname.endsWith("/join");
+  }, [location.pathname]);
+  useEffect(() => {
+    if (checkIfPrivate()) {
+      const roomId = searchParams.get("id");
+      if (performance.getEntriesByType("navigation")[0].type === "reload") {
+        navigate("/", { replace: true });
+      } else {
+        emitEvent("check_room", roomId);
+      }
+    }
+  }, []);
+
   return (
     <div className="flex items-center justify-center min-h-screen w-full bg-background">
       {gameStarted ? (
-        <div className="flex flex-col gap-5 w-fit">
-          <GameHeader />
-          <Board />
-          <ResultBox />
-          <GiveUpBox />
+        <div className="flex items-center justify-center w-full px-5">
+          <div className="flex flex-col gap-5 w-full max-w-[638px]">
+            <GameHeader />
+            <Board />
+            <ResultBox />
+            <GiveUpBox />
+          </div>
         </div>
       ) : (
-        <StartMenu />
+        <div className="flex items-center justify-center w-full px-5">
+          <StartMenu />
+        </div>
       )}
     </div>
   );

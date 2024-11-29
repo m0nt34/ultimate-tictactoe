@@ -1,11 +1,13 @@
 import { combinations } from "../data/winningCombinations";
 import { useBoard } from "../store/board";
+
 import { useValue } from "../store/Value";
 import { useWinner } from "../store/winner";
-import { checkForDraw } from "./checkForDraw";
+
 export const checkWinner = () => {
   const { board } = useBoard.getState();
   const { setWinner, setText } = useWinner.getState();
+
 
   const { value } = useValue.getState();
 
@@ -18,6 +20,7 @@ export const checkWinner = () => {
     ) {
       setWinner(board[a].value);
       setText(board[a].value === value ? "YOU WON!" : "YOU LOSE!");
+  
       return false;
     }
   }

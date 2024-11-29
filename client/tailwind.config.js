@@ -12,6 +12,12 @@ export default {
         gray: "#A8BEC9",
         dark_gray: "#6c8997",
       },
+      screens: {
+        sm800: { max: "800px" },
+        sm600: { max: "600px" },
+        sm460: { max: "460px" },
+        sm400: { max: "400px" },
+      },
     },
   },
   plugins: [],

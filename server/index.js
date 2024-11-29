@@ -1,7 +1,8 @@
 import express from "express";
 import http from "http";
 import { Server } from "socket.io";
-import { isBooleanObject } from "util/types";
+import { generateRoomId } from "./utils/generateID.js";
+import { randomTrueOrFalse } from "./utils/setTurn.js";
 
 const app = express();
 
@@ -27,6 +28,19 @@ io.on("connection", (socket) => {
     socket.emit("users_count", connectedUsers.size);
   });
   emitUserCount();
+
+  const assignUserToRoom = (userId, room, time = 0, isTurn) => {
+    const userSocket = io.sockets.sockets.get(userId);
+    if (userSocket) {
+      userSocket.join(room);
+      userSocket.emit("room_assigned", {
+        room,
+        time,
+        turn: isTurn,
+      });
+    }
+  };
+
   socket.on("join_queue", () => {
     if (!waitingLine.has(socket.id)) {
       waitingLine.add(socket.id);
@@ -37,21 +51,11 @@ io.on("connection", (socket) => {
         waitingLine.delete(user2);
 
         const room = `${user1}-${user2}`;
-        rooms[room] = { user1, user2, currentTurn: user1 };
+        const randomturn = randomTrueOrFalse();
+        rooms[room] = { user1, user2, currentTurn: randomturn ? user1 : user2 };
 
-        const assignUserToRoom = (userId, isTurn) => {
-          const userSocket = io.sockets.sockets.get(userId);
-          if (userSocket) {
-            userSocket.join(room);
-            userSocket.emit("room_assigned", {
-              room,
-              turn: isTurn,
-            });
-          }
-        };
-
-        assignUserToRoom(user1, true);
-        assignUserToRoom(user2, false);
+        assignUserToRoom(user1, room, 0, randomturn ? "x" : "o");
+        assignUserToRoom(user2, room, 0, !randomturn ? "x" : "o");
       }
     }
   });
@@ -110,30 +114,25 @@ io.on("connection", (socket) => {
       );
       return;
     }
-    const offeringUser =
-      rooms[room]?.user1 === socket.id ? rooms[room].user2 : rooms[room].user1;
+    const user1 = rooms[room]?.user1 || null;
+    const user2 = rooms[room]?.user2 || null;
 
-    const isOfferingUserInRoom =
-      rooms[room].user1 === offeringUser || rooms[room].user2 === offeringUser;
-
-    if (isOfferingUserInRoom && offeringUser) {
-      const user1 = rooms[room]?.user1 || null;
-      const user2 = rooms[room]?.user2 || null;
-      rooms[room].user1 = user2;
-      rooms[room].user2 = user1;
-      rooms[room].currentTurn = rooms[room].user1;
-      io.to(rooms[room].user1).emit("get_rematch_accepted", { turn: true });
-      io.to(rooms[room].user2).emit("get_rematch_accepted", { turn: false });
-    } else {
+    if (!user1 || !user2) {
       io.to(socket.id).emit(
         "opponent_left",
         "YOUR OPPONENT HAS LEFT THE ROOM!"
       );
+      return;
     }
+
+    rooms[room].user1 = user2;
+    rooms[room].user2 = user1;
+    rooms[room].currentTurn = rooms[room].user1;
+
+    io.to(user2).emit("get_rematch_accepted", { turn: "x" });
+    io.to(user1).emit("get_rematch_accepted", { turn: "o" });
   });
   socket.on("decline_rematch", (room) => {
-    console.log(room);
-
     if (!rooms[room]) {
       return;
     }
@@ -150,6 +149,7 @@ io.on("connection", (socket) => {
     const details = rooms[room];
 
     if (details) {
+      io.sockets.sockets.get(socket.id).leave(room);
       if (details.user1 === socket.id) {
         details.user1 = null;
       } else if (details.user2 === socket.id) {
@@ -163,9 +163,62 @@ io.on("connection", (socket) => {
   });
 
   socket.on("resign", (room) => {
-    const winner =
-      rooms[room].user1 === socket.id ? rooms[room].user2 : rooms[room].user1;
-    io.to(winner).emit("early_resignation", "VICTORY BY RESIGNATION!");
+    if (rooms[room]) {
+      const winner =
+        rooms[room].user1 === socket.id ? rooms[room].user2 : rooms[room].user1;
+      io.to(winner).emit("early_resignation", "VICTORY BY RESIGNATION!");
+    }
+  });
+
+  socket.on("create_private_room", () => {
+    const newPR = generateRoomId();
+    if (!PrivateRooms[newPR]) {
+      PrivateRooms[newPR] = { room: newPR, creator: socket.id, time: false };
+      socket.emit("get_privat_room_id", newPR);
+    }
+  });
+
+  socket.on("change_private_room_time", ({ room, newTime }) => {
+    if (PrivateRooms[room]) {
+      PrivateRooms[room].time = newTime;
+    }
+  });
+
+  socket.on("time_out", ({ room, winnerbytimeout }) => {
+    if (rooms[room]) {
+      const winner =
+        rooms[room].user1 === socket.id ? rooms[room].user2 : rooms[room].user1;
+      io.to(winner).emit("win_by_timeout", {text:"WIN BY OPPONENT'S TIMEOUT!",winnerbytimeout});
+    }
+  });
+
+  socket.on("check_room", (room) => {
+    if (PrivateRooms[room]) {
+      const randomturn = randomTrueOrFalse();
+
+      const user1 = PrivateRooms[room].creator;
+      const user2 = socket.id;
+      rooms[room] = { user1, user2, currentTurn: randomturn ? user1 : user2 };
+
+      assignUserToRoom(
+        user1,
+        room,
+        PrivateRooms[room].time,
+        randomturn ? "x" : "o"
+      );
+      assignUserToRoom(
+        user2,
+        room,
+        PrivateRooms[room].time,
+        !randomturn ? "x" : "o"
+      );
+
+      if (PrivateRooms[room]) {
+        delete PrivateRooms[room];
+      }
+    } else {
+      socket.emit("private_room_is_not_valid");
+    }
   });
 
   socket.on("disconnect", () => {
@@ -176,11 +229,13 @@ io.on("connection", (socket) => {
     for (const [room, details] of Object.entries(rooms)) {
       if (details.user1 === socket.id || details.user2 === socket.id) {
         delete rooms[room];
-        io.to(room).emit(
-          "early_resignation",
-          "THE GAME CANNOT CONTINUE AS YOUR OPPONENT HAS DISCONNECTED!"
-        );
+        io.to(room).emit("opponent_disconected", "OPPONENT DISCONNECTED!");
         io.socketsLeave(room);
+      }
+    }
+    for (const [room, creator] of Object.entries(PrivateRooms)) {
+      if (creator.creator === socket.id) {
+        delete PrivateRooms[room];
       }
     }
   });

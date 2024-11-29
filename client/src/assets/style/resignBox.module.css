@@ -44,6 +44,20 @@
   max-width: 400px;
 }
 
+@media (max-width:600px){
+  .show_resign_cont .show_resign .buttons_cont {
+    max-width: 300px;
+
+  }
+  
+}
+@media (max-width:400px){
+  .show_resign_cont .show_resign .buttons_cont {
+    max-width: 250px;
+  }
+
+}
+
 .show_resign_cont .show_resign h1,
 .show_resign_cont .show_resign .buttons_cont {
   animation: 1s appear_text;
@@ -91,7 +105,7 @@
     pointer-events: none;
     opacity: 0;
   }
-  55% {
+  70% {
     pointer-events: none;
     opacity: 0;
   }
@@ -178,11 +192,13 @@
     pointer-events: all;
     opacity: 1;
     gap: 10px;
+
   }
   100% {
     display: flex;
     pointer-events: none;
     opacity: 0;
     gap: 10px;
+
   }
 }

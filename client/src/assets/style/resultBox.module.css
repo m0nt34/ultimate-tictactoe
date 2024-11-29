@@ -37,8 +37,32 @@
   font-weight: 600;
   white-space: nowrap;
 }
+@media (max-width:800px){
+  .show_result_cont .show_result .custom_header {
+    font-size: 1rem;
+  }
+
+}
+@media (max-width:600px){
+  .show_result_cont .show_result .custom_header {
+    font-size: 14px;
+  }
+  .show_result_cont .show_result {
+    gap: 10px;
+  }
+}
+
+@media (max-width:500px){
+  .show_result_cont .show_result .custom_header {
+    font-size: 12px;
+  }
+
+}
+
 .show_result_cont .show_result .buttons_cont {
   display: flex;
+  align-items: center;
+  justify-content: center;
   gap: 10px;
   margin-top: 10px;
   width: 220px;
