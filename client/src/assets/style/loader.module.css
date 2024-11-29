@@ -11,6 +11,9 @@
 .custom_loader .first_set,
 .custom_loader .second_set,
 .custom_loader .third_set {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 30px;
   height: 30px;
 }
@@ -40,17 +43,21 @@
 
 @keyframes loading_animation {
   0% {
+    height: 0%;
     scale: 0;
     display: block;
   }
   20% {
+    height: 100%;
     scale: 1;
   }
   40% {
+    height: 0%;
     scale: 0;
     display: none;
   }
   100% {
+    height: 0%;
     scale: 0;
     display: none;
   }
