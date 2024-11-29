@@ -10,7 +10,7 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: ["http://localhost:5173"],
+    origin: ["http://localhost:5173", "https://ultra-tictactoe.netlify.app"],
     credentials: true,
   },
 });
@@ -188,7 +188,10 @@ io.on("connection", (socket) => {
     if (rooms[room]) {
       const winner =
         rooms[room].user1 === socket.id ? rooms[room].user2 : rooms[room].user1;
-      io.to(winner).emit("win_by_timeout", {text:"WIN BY OPPONENT'S TIMEOUT!",winnerbytimeout});
+      io.to(winner).emit("win_by_timeout", {
+        text: "WIN BY OPPONENT'S TIMEOUT!",
+        winnerbytimeout,
+      });
     }
   });
 
