@@ -13,7 +13,7 @@ const Board = () => {
   const { allowedMiniBoard } = useAllowedMiniBoard();
 
   return (
-    <div className="grid grid-cols-3 gap-4 sm600:gap-3 sm460:gap-[10px] sm400:gap-[9px] h-fit">
+    <div className="grid grid-cols-3 gap-4 sm600:gap-3 sm460:gap-[10px] sm400:gap-[9px] max-h-full overflow-hidden">
       {board.map((miniBoard, i) => {
         return (
           <div
@@ -33,18 +33,18 @@ const Board = () => {
             }`}
           >
             {miniBoard.value ? (
-              <div className="flex items-center justify-center bg-light_background w-full aspect-[101/107] rounded-lg sm460:rounded-md border-b-4 sm460:border-b-[3px] border-dark_background">
+              <div className="flex items-center justify-center bg-light_background w-full aspect-square rounded-lg border-b-4 sm460:border-b-[3px] border-dark_background">
                 {miniBoard.value === "x" ? (
-                  <Xmark className="h-[55%] w-[55%]" />
+                  <Xmark className="h-[55%] w-[55%] max-h-full max-w-full" />
                 ) : (
-                  <Omark className="h-[55%] w-[55%]" />
+                  <Omark className="h-[55%] w-[55%] max-h-full max-w-full" />
                 )}
               </div>
             ) : (
               miniBoard.miniBoard.map((cell, j) => {
                 return (
                   <div
-                    className={`flex items-center justify-center bg-light_background aspect-[16/17] h-auto w-full rounded-lg sm600:rounded-[7px] sm460:rounded-md hover:bg-[#284452] cursor-pointer border-b-4 sm460:border-b-[3px] border-dark_background ${
+                    className={`flex items-center justify-center bg-light_background aspect-square h-auto w-full rounded-lg sm600:rounded-[7px] hover:bg-[#284452] cursor-pointer border-b-4 sm460:border-b-[3px] border-dark_background ${
                       cell ? "pointer-events-none" : null
                     }`}
                     key={`${i}-${j}`}
@@ -52,9 +52,9 @@ const Board = () => {
                   >
                     {cell ? (
                       cell === "x" ? (
-                        <Xmark className="h-[55%] w-[55%] aspect-square" />
+                        <Xmark className="h-[55%] w-[55%] max-h-full max-w-full" />
                       ) : (
-                        <Omark className="h-[55%] w-[55%] aspect-square" />
+                        <Omark className="h-[55%] w-[55%] max-h-full max-w-full" />
                       )
                     ) : null}
                   </div>
