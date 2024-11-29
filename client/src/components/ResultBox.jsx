@@ -4,7 +4,7 @@ import style from "../assets/style/resultBox.module.css";
 import Xmark from "../assets/icons/Xmark";
 import Omark from "../assets/icons/Omark";
 import { resetGame } from "../utils/resetGame";
-import CustomLoader from "./customLoader";
+import CustomLoader from "./customLoader.jsx";
 import { useRoom } from "../store/room";
 import { emitEvent, listenToEvent, removeListener } from "../services/socket";
 import { useBoard } from "../store/board";
